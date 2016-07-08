@@ -2,6 +2,7 @@ var creepFactory = require('creepFactory');
 
 module.exports = {
     run: function() {
+        //console.log(JSON.stringify(creepFactory.queue));
         if (Game.flags.SAY) {
             var localCreeps = _.filter(Game.creeps, (c) => c.my && c.room.name == Game.flags.SAY.pos.roomName);
             for (i in localCreeps) {
@@ -26,14 +27,15 @@ module.exports = {
             this.clean();
             return;
         }
-        var spawnCreeps = _.filter(Game.creeps, (c) => c.my && c.memory.mother == "Spawn1");
+        var spawn = _.filter(Game.spawns, (s) => s.my && s.pos.roomName == Memory.GUI.root.roomName)[0];
+        var spawnCreeps = _.filter(Game.creeps, (c) => c.my && c.memory.mother == spawn.name);
         this.updateFlag('spawn energy', 'spawn E: ' + Game.rooms[Memory.GUI.root.roomName].energyAvailable, 0, 0);
         this.updateFlag('store energy', 'storage E: ' + Game.rooms[Memory.GUI.root.roomName].storage.store.energy, 0, 2);
         this.updateFlag('number of creeps', '# of creeps: ' + _.filter(spawnCreeps, (c) => c.my).length, 0, 4);
-        var queue = '(' + creepFactory.queue.length + ')';
-        if (creepFactory.queue[0])
-            queue += ' ' + creepFactory.queue[0].role + (creepFactory.queue[0].group ? ':' + creepFactory.queue[0].group : '');
-        if (creepFactory.queue[1])
+        var queue = '(' + creepFactory.queue[spawn.name].length + ')';
+        if (creepFactory.queue[spawn.name][0])
+            queue += ' ' + creepFactory.queue[spawn.name][0].role + (creepFactory.queue[spawn.name][0].group ? ':' + creepFactory.queue[spawn.name][0].group : '');
+        if (creepFactory.queue[spawn.name][1])
             queue += ', ...';
         
         //console.log(JSON.stringify(creepFactory.queue));
@@ -42,7 +44,7 @@ module.exports = {
         this.updateFlag('spawn queue', queue, 3, 6);
         
         this.updateFlag('spawning label', 'spawning:', -2, 8);
-        this.updateFlag('spawning', Game.spawns.Spawn1.spawning && Memory.creeps[Game.spawns.Spawn1.spawning.name] ? Memory.creeps[Game.spawns.Spawn1.spawning.name].role + (Memory.creeps[Game.spawns.Spawn1.spawning.name].group ? ':' + Memory.creeps[Game.spawns.Spawn1.spawning.name].group : '') : '(not spawning)', 3, 8);
+        this.updateFlag('spawning', spawn.spawning && Memory.creeps[spawn.spawning.name] ? Memory.creeps[spawn.spawning.name].role + (Memory.creeps[spawn.spawning.name].group ? ':' + Memory.creeps[spawn.spawning.name].group : '') : '(not spawning)', 3, 8);
         
         this.updateFlag('next creep to die label', 'next creep to die:', -2, 10);
         var nextDeath =  _.sortBy(spawnCreeps, (c) => c.ticksToLive);

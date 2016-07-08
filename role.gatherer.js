@@ -5,36 +5,39 @@ var roleGatherer = {
         if (!creep.memory.emptying) {
             var toGather;
             if (!creep.memory.group) {
-                var link = null;
+                let link = null;
+                let controllerContainer = null
+                if (Memory.containers && Memory.containers[spawn.name] && Memory.containers[spawn.name].controller)
+                    controllerContainer = Memory.containers[spawn.name].controller[0];
                 if (Memory.links[spawn.name] && Memory.links[spawn.name].target)
                     link = Memory.links[spawn.name].target;
                 if (!toGather)
-                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 1200 });
-                /*if (!toGather && spawn.memory.needEnergy)
-                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_STORAGE && structure.store[RESOURCE_ENERGY] > creep.carryCapacity });*/
+                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 1200 && structure.id != controllerContainer });
                 if (!toGather)
-                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 1500) ||
+                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 1500 && structure.id != controllerContainer) ||
                                                                                                      (structure.id == link && structure.energy > 600) });
                 if (!toGather) {
                     if (creep.room.find(FIND_HOSTILE_CREEPS, { filter: (c) => _.filter(c.body, (b) => b.type == 'attack'|| b.type == 'ranged_attack').length > 0 }).length == 0)
                         toGather = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, { filter: (r) => r.amount > 100 });
                 }
                 if (!toGather)
-                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 600) ||
+                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 600 && structure.id != controllerContainer) ||
                                                                                                      (structure.id == link && structure.energy > 300) });
                 if (!toGather)
-                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 300) ||
+                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 300 && structure.id != controllerContainer) ||
                                                                                                      (structure.id == link && structure.energy > 200) });
                 if (!toGather)
-                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 150) ||
+                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 150 && structure.id != controllerContainer) ||
                                                                                                      (structure.id == link && structure.energy > 100) });
                 if (!toGather) {
                     if (creep.room.find(FIND_HOSTILE_CREEPS, { filter: (c) => _.filter(c.body, (b) => b.type == 'attack'|| b.type == 'ranged_attack').length > 0 }).length == 0)
                         toGather = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, { filter: (r) => r.amount > 0 });
                 }
                 if (!toGather)
-                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 0) ||
+                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 0 && structure.id != controllerContainer) ||
                                                                                                      (structure.id == link && structure.energy > 0) });
+                if (!toGather && spawn.memory.needEnergy)
+                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_STORAGE && structure.store[RESOURCE_ENERGY] > 0 });
             }
             else
             {
@@ -62,7 +65,7 @@ var roleGatherer = {
                 creep.memory.idleTicks = creep.memory.idleTicks ? creep.memory.idleTicks + 1 : 1;
             else
                 creep.memory.idleTicks = 0;
-            if (creep.memory.idleTicks > 5)
+            if (creep.memory.idleTicks >= 4)
                 creep.memory.emptying = true;
                 
         }

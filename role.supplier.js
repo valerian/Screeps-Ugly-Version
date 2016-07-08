@@ -66,15 +66,24 @@ var roleSupplier = {
             creep.memory.refilling = _.sum(creep.carry) < creep.carryCapacity && creep.memory.idleTicks < 5;
         } else {
             creep.memory.refilling = false;
-            var toSupply 
+            let controllerContainer = null
+            if (Memory.containers && Memory.containers[spawn.name] && Memory.containers[spawn.name].controller)
+                controllerContainer = Memory.containers[spawn.name].controller[0];
+            //console.log(controllerContainer);
+            //console.log(creep.pos.findClosestByRange(FIND_STRUCTURES, { filter: (structure) => structure.id == controllerContainer && structure.store[RESOURCE_ENERGY] < 1200}));
+            let toSupply;
             if (!toSupply)
                 toSupply = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_TOWER && structure.energy <= structure.energyCapacity * 0.33});
+            if (!toSupply && controllerContainer)
+                toSupply = creep.pos.findClosestByRange(FIND_STRUCTURES, { filter: (structure) => structure.id == controllerContainer && structure.store[RESOURCE_ENERGY] < 1200});
             if (!toSupply)
                 toSupply = creep.pos.findClosestByPath(FIND_MY_CREEPS, { filter: (creep) => (creep.memory.role == 'worker' || creep.memory.role == 'mason') && creep.carry.energy == 0 });
             if (!toSupply)
                 toSupply = creep.pos.findClosestByPath(FIND_MY_CREEPS, { filter: (creep) => (creep.memory.role == 'worker' || creep.memory.role == 'mason') && creep.carry.energy <= (creep.carryCapacity / 2) });
             if (!toSupply)
                 toSupply = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_TOWER && structure.energy <= structure.energyCapacity * 0.66});
+            if (!toSupply && controllerContainer)
+                toSupply = creep.pos.findClosestByRange(FIND_STRUCTURES, { filter: (structure) => structure.id == controllerContainer && structure.store[RESOURCE_ENERGY] < 2000});
             if (!toSupply)
                 toSupply = creep.pos.findClosestByPath(FIND_MY_CREEPS, { filter: (creep) => (creep.memory.role == 'worker' || creep.memory.role == 'mason') && creep.carry.energy < creep.carryCapacity });
             //console.log(toSupply);

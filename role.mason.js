@@ -14,6 +14,13 @@ module.exports = {
             if (!target)
                 target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                     filter: (structure) =>
+                        structure.hits < 10000 &&
+                        (structure.structureType == STRUCTURE_WALL || structure.structureType == STRUCTURE_RAMPART) &&
+                        structure.pos.lookFor(LOOK_FLAGS).length == 0
+                });
+            if (!target)
+                target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                    filter: (structure) =>
                         structure.hits < 25000 &&
                         (structure.structureType == STRUCTURE_WALL || structure.structureType == STRUCTURE_RAMPART) &&
                         structure.pos.lookFor(LOOK_FLAGS).length == 0

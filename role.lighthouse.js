@@ -1,6 +1,6 @@
 module.exports = {
     run: function(creep, spawn) {
-        flag = Game.flags.harvest;
+        flag = Game.flags.harvest || Game.flags.prospect;
         
         if(flag && creep.room.name == flag.pos.roomName) {
             var enemy = creep.room.find(FIND_HOSTILE_CREEPS)[0];
@@ -14,6 +14,7 @@ module.exports = {
                 if (!creep.pos.inRangeTo(creep.room.controller, 1))
                     creep.moveTo(creep.room.controller, { reusePath: 0 });
                 else {
+                    creep.reserveController(creep.room.controller);
                     creep.claimController(creep.room.controller);
                 }
             } else {

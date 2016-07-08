@@ -44,13 +44,14 @@ module.exports = {
             closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: (structure) => structure.hits < structure.hitsMax && structure.hits < 250000 && structure.structureType == STRUCTURE_CONTAINER
         });
+        
         if (!closestDamagedStructure)
             closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: (structure) => structure.hits < structure.hitsMax && structure.hits < 300000 && (structure.structureType == STRUCTURE_RAMPART || structure.structureType == STRUCTURE_WALL)
         });
         if (!closestDamagedStructure && tower.room.name == 'W11N38')
             closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-                filter: (structure) => structure.hits < structure.hitsMax && structure.hits < 600000 && (structure.structureType == STRUCTURE_RAMPART || structure.structureType == STRUCTURE_WALL)
+                filter: (structure) => structure.hits < structure.hitsMax && structure.hits < 450000 && (structure.structureType == STRUCTURE_RAMPART || structure.structureType == STRUCTURE_WALL)
         });
         
         if(closestDamagedStructure) {

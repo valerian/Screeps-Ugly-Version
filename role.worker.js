@@ -14,6 +14,12 @@ var roleWorker = {
         else {
             if (!creep.pos.inRangeTo(creep.room.controller, 2))
                 creep.moveTo(creep.room.controller, { reusePath: 0 });
+            if (creep.carry.energy < creep.carryCapacity * 0.75 && Memory.containers && Memory.containers[spawn.name] && Memory.containers[spawn.name].controller) {
+                let controllerContainer = Game.getObjectById(Memory.containers[spawn.name].controller[0]);
+                if (controllerContainer)
+                    if (controllerContainer.transfer(creep, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE)
+                        creep.moveTo(controllerContainer);
+            }
             creep.upgradeController(creep.room.controller);
         }
 	}

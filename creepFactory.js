@@ -9,14 +9,16 @@
 
 var creepFactory = {
     willBeSpawned: "nothing",
-    queue: [],
     
     createIfLessThan: function(spawn, role, level, quantity, group) {
         //console.log('[' + spawn.name + ']trying to create if less than ' + quantity + ': level ' + level + " " + role + " (group " + group + ")");
+        let ttl = (20 * level) + 20;
+        if (role == 'hauler' || role == 'prospector')
+            ttl += 120;
         if (group) {
             if (spawn.spawning && Memory.creeps[spawn.spawning.name] && Memory.creeps[spawn.spawning.name].role == role && Memory.creeps[spawn.spawning.name].group == group)
                 quantity--;
-            if (_.filter(Game.creeps, (creep) => creep.my && creep.memory.mother == spawn.name && creep.memory.role == role && creep.memory.group == group && creep.ticksToLive > (20 * level) + 20 && creep.hits == creep.hitsMax).length < quantity) {
+            if (_.filter(Game.creeps, (creep) => creep.my && creep.memory.mother == spawn.name && creep.memory.role == role && creep.memory.group == group && creep.ticksToLive > ttl && creep.hits == creep.hitsMax).length < quantity) {
                 return this.create(spawn, role, level, group);
             }
         }
@@ -24,7 +26,7 @@ var creepFactory = {
             //console.log("this");
             if (spawn.spawning && Memory.creeps[spawn.spawning.name] && Memory.creeps[spawn.spawning.name].role == role && !Memory.creeps[spawn.spawning.name].group)
                 quantity--;
-            if (_.filter(Game.creeps, (creep) => creep.my && creep.memory.mother == spawn.name && creep.memory.role == role && !creep.memory.group && creep.ticksToLive > (20 * level) + 20 && creep.hits == creep.hitsMax).length < quantity) {
+            if (_.filter(Game.creeps, (creep) => creep.my && creep.memory.mother == spawn.name && creep.memory.role == role && !creep.memory.group && creep.ticksToLive > ttl && creep.hits == creep.hitsMax).length < quantity) {
                 return this.create(spawn, role, level);
             }
         }
@@ -50,7 +52,7 @@ var creepFactory = {
             }
             return result;
         }
-        this.queue.unshift({ role: role, level: level, group: group });
+        this.queue[spawn.name].unshift({ role: role, level: level, group: group });
         spawn.memory.needEnergy = true;
         //console.log(spawn.memory.needEnergy);
         return false;
@@ -119,6 +121,9 @@ var creepFactory = {
         
         mason:
         {
+            3: [WORK, WORK, WORK, WORK, WORK,
+                CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE],
             4: [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK,
                 CARRY, CARRY, CARRY, CARRY, CARRY,
                 MOVE, MOVE, MOVE, MOVE, MOVE]
@@ -127,7 +132,7 @@ var creepFactory = {
         lighthouse:
         {
             3: [CLAIM, MOVE],
-            4: [CLAIM, CLAIM, MOVE, MOVE]
+            4: [CLAIM, CLAIM, MOVE, MOVE, MOVE, MOVE]
         },
         
         thief:
@@ -144,6 +149,24 @@ var creepFactory = {
                 MOVE, MOVE, MOVE,
                 MOVE, MOVE, MOVE,
                 MOVE, MOVE, MOVE,]
+        },
+        
+        ram:
+        {
+            3: [WORK, WORK, WORK, WORK, WORK, 
+                MOVE, MOVE, MOVE, MOVE, MOVE]
+        },
+        
+        hauler:
+        {
+            6: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
+        },
+        
+        prospector:
+        {
+            4: [WORK, WORK, WORK, WORK, WORK, WORK,
+                MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
         }
     }
 };

@@ -8,14 +8,16 @@ var roleFisherman = require('role.fisherman');
 var roleLighthouse = require('role.lighthouse');
 var roleMason = require('role.mason');
 var roleThief = require('role.thief');
+var roleRam = require('role.ram');
+var roleHauler = require('role.hauler');
+var roleProspector = require('role.prospector');
 var creepFactory = require('creepFactory');
 var defendRoom = require('defendRoom');
 var towerScript = require('tower');
-var linksScript = require('links');
+var structuresScript = require('structures');
 var GUI = require('GUI');
 
 function runRoom(spawn) {
-    creepFactory.queue = [];
     var spawnCreeps = _.filter(Game.creeps, (c) => c.my && c.memory.mother == spawn.name);
     var localStructures = _.filter(Game.structures, (s) => s.room == spawn.room);
     
@@ -55,6 +57,8 @@ function runRoom(spawn) {
                 developmentLevel = 7;
             if (_.filter(localStructures, (structure) => structure.structureType == STRUCTURE_EXTENSION && structure.my).length >= 30 && spawnCreeps.length >= 6)
                 developmentLevel = 8;
+            if (_.filter(localStructures, (structure) => structure.structureType == STRUCTURE_EXTENSION && structure.my).length >= 40 && spawnCreeps.length >= 6)
+                developmentLevel = 9;
         }
     }
     
@@ -119,6 +123,7 @@ function runRoom(spawn) {
         case 6:
             /*if (Memory.spooked == 0)
                 creepFactory.createIfLessThan(spawn, 'fisherman', 3, 3);*/
+            //creepFactory.createIfLessThan(spawn, 'mason', 3, 1);
             creepFactory.createIfLessThan(spawn, 'supplier', 3, (spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0 ? 2 : 2));
             creepFactory.createIfLessThan(spawn, 'worker', 3, (spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0 ? 2 : 3));
             creepFactory.createIfLessThan(spawn, 'gatherer', 3, 1, 1);
@@ -137,7 +142,8 @@ function runRoom(spawn) {
                 creepFactory.createIfLessThan(spawn, 'lighthouse', 3, 1);
             }*/
             //creepFactory.createIfLessThan(spawn, 'gatherer', 3, 1, 1);
-            creepFactory.createIfLessThan(spawn, 'gatherer', 3, 1, 2);
+            if (!Memory.links[spawn.name])
+                creepFactory.createIfLessThan(spawn, 'gatherer', 3, 1, 2);
             creepFactory.createIfLessThan(spawn, 'miner', 3, 1, 1);
             creepFactory.createIfLessThan(spawn, 'miner', 3, 1, 2);
             if (Memory.spookedThief == 0 && Game.flags.steal) {
@@ -146,9 +152,35 @@ function runRoom(spawn) {
             break;
         case 8:
             //creepFactory.createIfLessThan(spawn, 'mason', 4, 1);
+            if (Game.flags.attack && spawn.name == 'Spawn1')
+                creepFactory.createIfLessThan(spawn, 'ram', 3, 1);
             creepFactory.createIfLessThan(spawn, 'worker', 4, (spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0 ? 2 : 2));
             creepFactory.createIfLessThan(spawn, 'supplier', 5, (spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0 ? 1 : 1));
             creepFactory.createIfLessThan(spawn, 'gatherer', 5, 1);
+            if (Memory.spooked == 0 && Game.flags.harvest) {
+                creepFactory.createIfLessThan(spawn, 'fisherman', 5, 3);
+                //creepFactory.createIfLessThan(spawn, 'lighthouse', 3, 1);
+            }
+            //creepFactory.createIfLessThan(spawn, 'gatherer', 3, 1, 1);
+            //creepFactory.createIfLessThan(spawn, 'gatherer', 3, 1, 2);
+            creepFactory.createIfLessThan(spawn, 'miner', 3, 1, 1);
+            creepFactory.createIfLessThan(spawn, 'miner', 3, 1, 2);
+            if (Memory.spookedThief == 0 && Game.flags.steal) {
+                //creepFactory.createIfLessThan(spawn, 'thief', 5, 1);
+            }
+            break;
+        case 9:
+            //creepFactory.createIfLessThan(spawn, 'mason', 4, 1);
+            if (Game.flags.attack && spawn.name == 'Spawn1')
+                creepFactory.createIfLessThan(spawn, 'ram', 3, 1);
+            if (Game.flags.prospect && spawn.name == 'Spawn1' && Memory.spooked == 0) {
+                creepFactory.createIfLessThan(spawn, 'hauler', 6, 4);
+                creepFactory.createIfLessThan(spawn, 'prospector', 4, 2);
+                creepFactory.createIfLessThan(spawn, 'lighthouse', 4, 1);
+            }
+            creepFactory.createIfLessThan(spawn, 'worker', 4, (spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0 ? 2 : 2));
+            creepFactory.createIfLessThan(spawn, 'supplier', 5, (spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0 ? 1 : 1));
+            creepFactory.createIfLessThan(spawn, 'gatherer', 4, 2);
             if (Memory.spooked == 0 && Game.flags.harvest) {
                 creepFactory.createIfLessThan(spawn, 'fisherman', 5, 3);
                 //creepFactory.createIfLessThan(spawn, 'lighthouse', 3, 1);
@@ -230,18 +262,36 @@ function runRoom(spawn) {
                     roleDeprecate.run(creep, spawn);
             }
             if(creep.memory.role == 'lighthouse') {
-                //roleLighthouse.run(creep, spawn);
-                roleDeprecate.run(creep, spawn);
+                if (Memory.spooked == 0 && Game.flags.prospect)
+                    roleLighthouse.run(creep, spawn);
+                else
+                    roleDeprecate.run(creep, spawn);
             }
             if(creep.memory.role == 'mason') {
                 //roleMason.run(creep, spawn);
                 roleDeprecate.run(creep, spawn);
             }
+            if(creep.memory.role == 'ram') {
+                roleRam.run(creep, spawn);
+                //roleDeprecate.run(creep, spawn);
+            }            
+            if(creep.memory.role == 'hauler') {
+                if (Memory.spooked == 0 && Game.flags.prospect)
+                    roleHauler.run(creep, spawn);
+                else
+                    roleDeprecate.run(creep, spawn);
+            }            
+            if(creep.memory.role == 'prospector') {
+                if (Memory.spooked == 0 && Game.flags.prospect)
+                    roleProspector.run(creep, spawn);
+                else
+                    roleDeprecate.run(creep, spawn);
+            }
         }
     }
     
     spawn.room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}}).forEach(tower => towerScript.run(tower));
-    linksScript.run(spawn);
+    structuresScript.run(spawn);
 }
 
 module.exports.loop = function() {
@@ -254,9 +304,13 @@ module.exports.loop = function() {
         }
     }
     
+    creepFactory.queue = {};
     var mySpawns = _.filter(Game.spawns, (s) => s.my);
-    for (var i in mySpawns)
+    for (let i in mySpawns) {
+        creepFactory.queue[mySpawns[i].name] = [];
+        //console.log(JSON.stringify(creepFactory.queue));
         runRoom(mySpawns[i]);
+    }
         
     GUI.run();
     
