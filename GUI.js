@@ -30,7 +30,9 @@ module.exports = {
         var spawn = _.filter(Game.spawns, (s) => s.my && s.pos.roomName == Memory.GUI.root.roomName)[0];
         var spawnCreeps = _.filter(Game.creeps, (c) => c.my && c.memory.mother == spawn.name);
         this.updateFlag('spawn energy', 'spawn E: ' + Game.rooms[Memory.GUI.root.roomName].energyAvailable, 0, 0);
-        this.updateFlag('store energy', 'storage E: ' + Game.rooms[Memory.GUI.root.roomName].storage.store.energy, 0, 2);
+        if (Game.rooms[Memory.GUI.root.roomName].storage) {
+            this.updateFlag('store energy', 'storage E: ' + Game.rooms[Memory.GUI.root.roomName].storage.store.energy, 0, 2);
+        }
         this.updateFlag('number of creeps', '# of creeps: ' + _.filter(spawnCreeps, (c) => c.my).length, 0, 4);
         var queue = '(' + creepFactory.queue[spawn.name].length + ')';
         if (creepFactory.queue[spawn.name][0])

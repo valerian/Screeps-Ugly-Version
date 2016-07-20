@@ -2,7 +2,9 @@ module.exports = {
     run: function(tower) {
         //console.log("test");
         
-        var hostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS, { filter: (c) => _.filter(c.body, (b) => b.type == 'heal' && b.hits > 0).length > 0 });
+        var hostile;
+        /*if (!hostile)
+            hostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS, { filter: (c) => _.filter(c.body, (b) => b.type == 'heal' && b.hits > 0).length > 0 });*/
         if (!hostile)
             hostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
         if (hostile) {

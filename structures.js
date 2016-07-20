@@ -22,11 +22,12 @@ module.exports = {
             Memory.containers = { };
         if (!Memory.containers[spawn.name])
             Memory.containers[spawn.name] = { };
-        
-        let containers = spawn.room.find(FIND_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_CONTAINER && s.pos.getRangeTo(spawn.room.controller) <= 2 });
-        Memory.containers[spawn.name].controller = [];
-        for (let i in containers)
-            Memory.containers[spawn.name].controller.push(containers[i].id);    
+        if (!Memory.containers[spawn.name].controller || Memory.containers[spawn.name].controller.length == 0) {
+            let containers = spawn.room.find(FIND_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_CONTAINER && s.pos.getRangeTo(spawn.room.controller) <= 3 });
+            Memory.containers[spawn.name].controller = [];
+            for (let i in containers)
+                Memory.containers[spawn.name].controller.push(containers[i].id);    
+        }
     },
     
     run: function(spawn) {

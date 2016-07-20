@@ -12,14 +12,14 @@ var roleGatherer = {
                 if (Memory.links[spawn.name] && Memory.links[spawn.name].target)
                     link = Memory.links[spawn.name].target;
                 if (!toGather)
-                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 1200 && structure.id != controllerContainer });
-                if (!toGather)
-                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 1500 && structure.id != controllerContainer) ||
+                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 1850 && structure.id != controllerContainer) ||
                                                                                                      (structure.id == link && structure.energy > 600) });
                 if (!toGather) {
                     if (creep.room.find(FIND_HOSTILE_CREEPS, { filter: (c) => _.filter(c.body, (b) => b.type == 'attack'|| b.type == 'ranged_attack').length > 0 }).length == 0)
                         toGather = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, { filter: (r) => r.amount > 100 });
                 }
+                if (!toGather)
+                    toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 1200 && structure.id != controllerContainer });
                 if (!toGather)
                     toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 600 && structure.id != controllerContainer) ||
                                                                                                      (structure.id == link && structure.energy > 300) });
@@ -53,13 +53,13 @@ var roleGatherer = {
             }
             if (toGather && creep.carry.energy < creep.carryCapacity) {
                 if ((toGather.transferEnergy ? toGather.transferEnergy(creep) : (toGather.transfer ? toGather.transfer(creep, RESOURCE_ENERGY) : creep.pickup(toGather))) == ERR_NOT_IN_RANGE)
-                    creep.moveTo(toGather);
+                    creep.moveTo(toGather, { reusePath: 1 });
             }
             if (!toGather && creep.memory.group)
             {
                 var container = creep.pos.findClosestByRange(FIND_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_CONTAINER && creep.pos.getRangeTo(structure.pos) == 0 });
                 if (container)
-                    creep.move(creep.pos.getDirectionTo(spawn));
+                    creep.move(creep.pos.getDirectionTo(spawn, { reusePath: 1 }));
             }
             if (!toGather)
                 creep.memory.idleTicks = creep.memory.idleTicks ? creep.memory.idleTicks + 1 : 1;
@@ -113,10 +113,10 @@ var roleGatherer = {
                 target = creep.pos.findClosestByPath(FIND_MY_CREEPS, { filter: (creep) => (creep.memory.role == 'worker' || creep.memory.role == 'mason') && creep.carry.energy < creep.carryCapacity });
             if(target) {
                 if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, { reusePath: 0 });
+                    creep.moveTo(target, { reusePath: 1 });
                 }
             } else {
-                creep.moveTo(spawn);
+                creep.moveTo(spawn, { reusePath: 1 });
             }
             if (creep.carry.energy == 0)
                 creep.memory.emptying = false;

@@ -35,7 +35,7 @@ module.exports = {
                     }
                 }
                 if (creep.room.find(FIND_HOSTILE_SPAWNS).length == 0) {
-                    Game.flags.attack.remove();
+                    //Game.flags.attack.remove();
                 }
             }
             if (!target)

@@ -52,17 +52,19 @@ var roleSupplier = {
             
             if(target) {
                 if ((target.transferEnergy ? target.transferEnergy(creep) : (target.transfer ? target.transfer(creep, RESOURCE_ENERGY) : creep.pickup(target))) == ERR_NOT_IN_RANGE)
-                    creep.moveTo(target, { reusePath: 0 });
+                    creep.moveTo(target, { reusePath: 1 });
                 //console.log(creep.name + " refilling!");
                 // /*if((target.transferEnergy ? target.transferEnergy(creep) : target.transfer(creep, RESOURCE_ENERGY)) == ERR_NOT_IN_RANGE) {
                 //     creep.moveTo(target, { reusePath: 0 });
                 // }*/
             }
             
-            if (!target)
+            if (!target) {
                 creep.memory.idleTicks = creep.memory.idleTicks ? creep.memory.idleTicks + 1 : 1;
-            else
+                creep.moveTo(creep.room.storage || spawn);
+            } else {
                 creep.memory.idleTicks = 0;
+            }
             creep.memory.refilling = _.sum(creep.carry) < creep.carryCapacity && creep.memory.idleTicks < 5;
         } else {
             creep.memory.refilling = false;
@@ -72,6 +74,7 @@ var roleSupplier = {
             //console.log(controllerContainer);
             //console.log(creep.pos.findClosestByRange(FIND_STRUCTURES, { filter: (structure) => structure.id == controllerContainer && structure.store[RESOURCE_ENERGY] < 1200}));
             let toSupply;
+            let repair = false;
             if (!toSupply)
                 toSupply = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_TOWER && structure.energy <= structure.energyCapacity * 0.33});
             if (!toSupply && controllerContainer)
@@ -89,8 +92,8 @@ var roleSupplier = {
             //console.log(toSupply);
             if (toSupply && !creep.memory.refilling && creep.carry.energy > 0) {
                 //console.log(toSupply);
-                if(creep.transfer(toSupply, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(toSupply, { reusePath: 0 });
+                if((repair ? creep.repair(toSupply) : creep.transfer(toSupply, RESOURCE_ENERGY)) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(toSupply, { reusePath: 1 });
             }
         }
         }
