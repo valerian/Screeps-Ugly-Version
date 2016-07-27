@@ -8,7 +8,7 @@ var roleMiner = {
             var source = Game.getObjectById(spawn.memory.sources[creep.memory.group - 1]);
         var result = creep.harvest(source);
         if (result == ERR_NOT_IN_RANGE || result == ERR_NOT_ENOUGH_RESOURCES) {
-            creep.moveTo(source, { reusePath: 0 });
+            creep.moveTo(source, { reusePath: 5 });
         } else {
             var link = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_LINK });
             if (link && link.energy < link.energyCapacity && link.pos.getRangeTo(creep.pos) <= 2)

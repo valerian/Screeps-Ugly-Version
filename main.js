@@ -19,12 +19,10 @@ var towerScript = require('tower');
 var structuresScript = require('structures');
 var GUI = require('GUI');
 
-//console.log("toto: " + toto);
+var profiler = require('screeps-profiler');
+profiler.enable();
 
-//var profiler = require('screeps-profiler');
-//profiler.enable();
-
-function runRoom(spawn) {
+function runRoom(spawn) { 
     var spawnCreeps = _.filter(Game.creeps, (c) => c.my && c.memory.mother == spawn.name);
     var localStructures = _.filter(Game.structures, (s) => s.room == spawn.room);
     
@@ -63,13 +61,13 @@ function runRoom(spawn) {
             developmentLevel = 4;
             if (_.filter(localStructures, (structure) => structure.structureType == STRUCTURE_EXTENSION && structure.my).length >= 5)
                 developmentLevel = 5;
-            if (_.filter(localStructures, (structure) => structure.structureType == STRUCTURE_EXTENSION && structure.my).length >= 10 && spawnCreeps.length >= 8)
+            if (_.filter(localStructures, (structure) => structure.structureType == STRUCTURE_EXTENSION && structure.my).length >= 10 && spawnCreeps.length >= 7)
                 developmentLevel = 6;
-            if (_.filter(localStructures, (structure) => structure.structureType == STRUCTURE_EXTENSION && structure.my).length >= 20 && spawnCreeps.length >= 7)
+            if (_.filter(localStructures, (structure) => structure.structureType == STRUCTURE_EXTENSION && structure.my).length >= 20 && spawnCreeps.length >= 6)
                 developmentLevel = 7;
-            if (_.filter(localStructures, (structure) => structure.structureType == STRUCTURE_EXTENSION && structure.my).length >= 30 && spawnCreeps.length >= 6)
+            if (_.filter(localStructures, (structure) => structure.structureType == STRUCTURE_EXTENSION && structure.my).length >= 30 && spawnCreeps.length >= 5)
                 developmentLevel = 8;
-            if (_.filter(localStructures, (structure) => structure.structureType == STRUCTURE_EXTENSION && structure.my).length >= 40 && spawnCreeps.length >= 6)
+            if (_.filter(localStructures, (structure) => structure.structureType == STRUCTURE_EXTENSION && structure.my).length >= 40 && spawnCreeps.length >= 5)
                 developmentLevel = 9;
         }
     }
@@ -306,7 +304,7 @@ function runRoom(spawn) {
 }
 
 module.exports.loop = function() { 
-    //profiler.wrap(function() {
+    profiler.wrap(function() {
     
     //global.testt = "test";
     
@@ -345,5 +343,5 @@ module.exports.loop = function() {
         Memory.spookedThief--;
     else
         Memory.spookedThief = 0;
-    //});
+    });
 }

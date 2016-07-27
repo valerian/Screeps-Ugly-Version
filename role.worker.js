@@ -8,9 +8,9 @@ var roleWorker = {
         if (target) {
             let result = creep.build(target);
             if (result == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target, { reusePath: 0 });
+                creep.moveTo(target, { reusePath: 2 });
             } else if (result == ERR_INVALID_TARGET) {
-                creep.moveTo(spawn.pos, { reusePath: 0 });
+                creep.moveTo(spawn.pos, { reusePath: 2 });
             }
         } /* else if (creep.room.find(FIND_MY_STRUCTURES, { filter: (structure) => structure.structureType == STRUCTURE_TOWER }).length == 0) {
             if (!target)
@@ -29,12 +29,12 @@ var roleWorker = {
         } */
         if (!target) {
             if (!creep.pos.inRangeTo(creep.room.controller, 1))
-                creep.moveTo(creep.room.controller, { reusePath: 0 });
+                creep.moveTo(creep.room.controller, { reusePath: 2 });
             if (creep.carry.energy < creep.carryCapacity * 0.75 && Memory.containers && Memory.containers[spawn.name] && Memory.containers[spawn.name].controller) {
                 let controllerContainer = Game.getObjectById(Memory.containers[spawn.name].controller[0]);
                 if (controllerContainer)
                     if (controllerContainer.transfer(creep, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE)
-                        creep.moveTo(controllerContainer, { reusePath: 0 });
+                        creep.moveTo(controllerContainer, { reusePath: 2 });
             }
             creep.upgradeController(creep.room.controller);
         }
