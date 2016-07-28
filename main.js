@@ -20,6 +20,8 @@ var structuresScript = require('structures');
 var GUI = require('GUI');
 
 var profiler = require('screeps-profiler');
+_.filter = profiler.registerFN(_.filter, 'lodash_filter');
+_.prototype.filter = profiler.registerFN(_.prototype.filter, 'lodash_prototype_filter');
 profiler.enable();
 
 function runRoom(spawn) { 
@@ -78,6 +80,7 @@ function runRoom(spawn) {
 
     switch (developmentLevel) {
         case 0:
+            creepFactory.createIfLessThan(spawn, 'gatherer', 1, 1);
             creepFactory.createIfLessThan(spawn, 'bootstrapper', 1, 1, 1);
             break;
         case 1:
@@ -314,7 +317,7 @@ module.exports.loop = function() {
         }
     }
     
-    creepFactory.queue = {};
+    
     var mySpawns = _.filter(Game.spawns, (s) => s.my);
     
     if (Game.flags.harvest && Game.flags.harvest.room)
@@ -322,6 +325,7 @@ module.exports.loop = function() {
     if (Game.flags.prospect && Game.flags.prospect.room)
         defendRoom.defend(Game.flags.prospect.room);
     
+    creepFactory.queue = {};
     for (let i in mySpawns) {
         creepFactory.queue[mySpawns[i].name] = [];
         //console.log(JSON.stringify(creepFactory.queue));

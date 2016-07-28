@@ -1,4 +1,4 @@
-var profiler = require('screeps-profiler');
+//var profiler = require('screeps-profiler');
 
 var roleGatherer = {
 
@@ -36,7 +36,7 @@ var roleGatherer = {
                         toGather = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => (structure.structureType == STRUCTURE_CONTAINER && structure.store[RESOURCE_ENERGY] > 150 && structure.id != controllerContainer) ||
                                                                                                          (structure.id == link && structure.energy > 100) });*/
                     if (!toGather) {
-                        if (creep.room.find(FIND_HOSTILE_CREEPS, { filter: (c) => _.filter(c.body, (b) => b.type == 'attack'|| b.type == 'ranged_attack').length > 0 }).length == 0)
+                        if (creep.room.find(FIND_HOSTILE_CREEPS, { filter: (c) => _.filter(c.body, (b) => (b.type == 'attack'|| b.type == 'ranged_attack') && c.owner.username != 'Source Keeper').length > 0 }).length == 0)
                             toGather = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, { filter: (r) => r.amount > 0 });
                     }
                     if (!toGather)

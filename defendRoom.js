@@ -16,8 +16,10 @@ module.exports = {
             var username = hostiles[0].owner.username;
             var roomname = room.name;
             var time = Game.time;
-            Game.notify(`User ${username} spotted in room ${roomname} at ${time}`);
-            console.log(`User ${username} spotted in room ${roomname} at ${time}`);
+            if (username != 'Invader' && username != 'Source Keeper') {
+                Game.notify(`User ${username} spotted in room ${roomname} at ${time}`);
+                console.log(`User ${username} spotted in room ${roomname} at ${time}`);
+            }
         }
     }
 };

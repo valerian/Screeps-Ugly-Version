@@ -1,4 +1,4 @@
-var profiler = require('screeps-profiler');
+//var profiler = require('screeps-profiler');
 
 var roleSupplier = {
 
